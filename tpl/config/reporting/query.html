@@ -1,0 +1,54 @@
+<?php if(!defined('BCGT')) exit; ?>
+
+<?= (!empty($MSGS['errors'])) ? gt_error_alert_box($MSGS['errors']) : '' ?>
+<?= (!empty($MSGS['success'])) ? gt_success_alert_box($MSGS['success']) : '' ?>
+
+<?php if(gt_has_capability('block/gradetracker:crud_sql_report')): ?>
+<div class="gt_c">
+    <a href="<?= $CFG->wwwroot ?>/blocks/gradetracker/config.php?view=reporting&section=query&page=new" class="gt_btn"><?= $string['addnewquery']; ?></a>
+</div>
+<?php endif ?>
+
+<br>
+<table id="gt_sql_reports" class="gt_config">
+    <tr>
+        <th><?= $string['name']; ?></th>
+        <th><?= $string['description']; ?></th>
+        <th><?= $string['createddate']; ?></th>
+        <th><?= $string['lastedited']; ?></th>
+        <th><?= $string['lastran']; ?></th>
+        <th></th>
+    </tr>
+    <?php foreach($queries as $query): ?>
+        <?php if($query->deleted != 1): ?>
+        <tr>
+            <td>
+                <?php if(gt_has_capability('block/gradetracker:run_sql_report')): ?>
+                    <a href="<?= $CFG->wwwroot ?>/blocks/gradetracker/config.php?view=reporting&section=query&page=run&id=<?= $query->id; ?>"><?= $query->name; ?></a>
+                <?php else: ?>
+                    <?= $query->name; ?>
+                <?php endif ?>
+            </td>
+            <td><?= strlen($query->description) > 50 ? substr($query->description,0,50)."..." : $query->description; ?></td>
+            <td><?= date("d-m-Y", $query->created_date); ?></td>
+            <td><?= date("d-m-Y", $query->last_edited); ?></td>
+            <td>
+                <?= ($query->last_ran > 0) ? date("d-m-Y", $query->last_ran) : '-'; ?>
+            </td>
+            <td>
+                <?php if(gt_has_capability('block/gradetracker:run_sql_report')): ?>
+                    <a href="<?= $CFG->wwwroot ?>/blocks/gradetracker/config.php?view=reporting&section=query&page=run&id=<?= $query->id; ?>"><img src="<?= $OUTPUT->pix_url('t/right') ?>" alt="run"></a>
+                    &nbsp;&nbsp;
+                    <a href="<?= $CFG->wwwroot ?>/blocks/gradetracker/export.php?type=sql&id=<?= $query->id; ?>"><img src="<?= $OUTPUT->pix_url('i/report') ?>" alt="export"></a>
+                    &nbsp;&nbsp;
+                <?php endif ?>
+                <?php if(gt_has_capability('block/gradetracker:crud_sql_report')): ?>
+                    <a href="<?= $CFG->wwwroot ?>/blocks/gradetracker/config.php?view=reporting&section=query&page=edit&id=<?= $query->id; ?>"><img src="<?= $OUTPUT->pix_url('t/edit') ?>" alt="edit"></a>
+                    &nbsp;&nbsp;
+                    <a href="<?= $CFG->wwwroot ?>/blocks/gradetracker/config.php?view=reporting&section=query&page=delete&id=<?= $query->id; ?>"><img src="<?= $OUTPUT->pix_url('t/delete') ?>" alt="delete"></a>
+                <?php endif ?>
+            </td>
+        </tr>
+        <?php endif ?>
+    <?php endforeach; ?>
+</table>
